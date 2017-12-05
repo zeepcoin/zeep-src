@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Zeepcoin
+Comment=Zeepcoin P2P Cryptocurrency
+Comment[ru]=Zeepcoin, P2P криптовалюта
+Comment[fr]=Zeepcoin, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Zeepcoin, eşten eşe kriptografik sanal para birimi
+Exec=/usr/bin/Zeepcoin-qt
+Terminal=false
+Type=Application
+Icon=/usr/share/pixmaps/Zeepcoin80.xpm
+MimeType=x-scheme-handler/Zeepcoin;
+Categories=Office;

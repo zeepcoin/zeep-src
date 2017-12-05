@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# PROVIDE: Zeepcoin
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# Zeepcoin_enable (bool): Set to NO by default. Set this variable to YES if you want to enable Zeepcoin service.
+# Zeepcoin_config (path): Set to /usr/local/etc/Zeepcoin.conf by default.
+# Zeepcoin_user:  The user account Zeepcoin daemon runs as. It uses 'root' user by default.
+# Zeepcoin_group: The group account Zeepcoin daemon runs as. It uses 'wheel' group by default.
+# Zeepcoin_datadir (str): Default to "/var/db/Zeepcoin". Base data directory.
+
+. /etc/rc.subr
+
+name=Zeepcoin
+rcvar=Zeepcoin_enable
+
+: ${Zeepcoin_enable:=NO}
+: ${Zeepcoin_config=/usr/local/etc/Zeepcoin.conf}
+: ${Zeepcoin_datadir=/var/db/Zeepcoin}
+: ${Zeepcoin_user="root"}
+: ${Zeepcoin_group="wheel"}
+
+required_files=${Zeepcoin_config}
+command=/usr/local/bin/Zeepcoind
+Zeepcoin_chdir=${Zeepcoin_datadir}
+pidfile="${Zeepcoin_datadir}/Zeepcoind.pid"
+stop_cmd=Zeepcoin_stop
+command_args="-conf=${Zeepcoin_config} -datadir=${Zeepcoin_datadir} -daemon -pid=${pidfile}"
+start_precmd="${name}_prestart"
+
+Zeepcoin_create_datadir()
+{
+	echo "Creating data directory"
+	eval mkdir -p ${Zeepcoin_datadir}
+	[ $? -eq 0 ] && chown -R ${Zeepcoin_user}:${Zeepcoin_group} ${Zeepcoin_datadir}
+}
+
+Zeepcoin_prestart()
+{
+	if [ ! -d "${Zeepcoin_datadir}/." ]; then
+		Zeepcoin_create_datadir || return 1
+	fi
+}
+
+Zeepcoin_requirepidfile()
+{
+	if [ ! "0`check_pidfile ${pidfile} ${command}`" -gt 1 ]; then
+		echo "${name} not running? (check $pidfile)."
+		exit 1
+	fi
+}
+
+Zeepcoin_stop()
+{
+    Zeepcoin_requirepidfile
+
+	echo "Stopping ${name}."
+	eval ${command} -conf=${Zeepcoin_config} -datadir=${Zeepcoin_datadir} stop
+	wait_for_pids ${rc_pid}
+}
+
+load_rc_config $name
+run_rc_command "$1"

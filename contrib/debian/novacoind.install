@@ -1,0 +1,2 @@
+debian/bin/Zeepcoind usr/bin
+src/Zeepcoind usr/lib/Zeepcoin

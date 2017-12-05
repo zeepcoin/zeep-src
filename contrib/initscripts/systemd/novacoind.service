@@ -1,0 +1,11 @@
+[Unit]
+Description=Zeepcoin daemon serivce
+After=network.target
+
+[Service]
+Type=simple
+User=Zeepcoin
+ExecStart=/opt/Zeepcoin/Zeepcoind
+
+[Install]
+WantedBy=multi-user.target
